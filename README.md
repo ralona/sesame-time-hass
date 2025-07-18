@@ -82,10 +82,20 @@ Each employee device includes:
 ## Services
 
 ### `sesame_time.check_in`
-Check in an employee.
+Check in an employee with optional coordinates.
+
+**Parameters:**
+- `entity_id` (required): Button entity ID of the employee
+- `latitude` (optional): Latitude coordinates for check-in location
+- `longitude` (optional): Longitude coordinates for check-in location
 
 ### `sesame_time.check_out`
-Check out an employee.
+Check out an employee with optional coordinates.
+
+**Parameters:**
+- `entity_id` (required): Button entity ID of the employee
+- `latitude` (optional): Latitude coordinates for check-out location
+- `longitude` (optional): Longitude coordinates for check-out location
 
 ## Example Automations
 
@@ -100,8 +110,46 @@ automation:
         event: enter
     action:
       - service: sesame_time.check_in
-        target:
+        data:
           entity_id: button.ramon_lopez_sesame_check_in_out
+```
+
+### Check-in with specific coordinates
+```yaml
+automation:
+  - alias: "Check-in with office coordinates"
+    trigger:
+      - platform: device
+        device_id: your_phone_device_id
+        domain: device_tracker
+        entity_id: device_tracker.phone
+        type: enters
+        zone: zone.office
+    action:
+      - service: sesame_time.check_in
+        data:
+          entity_id: button.ramon_lopez_sesame_check_in_out
+          latitude: 40.4168
+          longitude: -3.7038
+```
+
+### Check-out with coordinates from sensor
+```yaml
+automation:
+  - alias: "Check-out with current location"
+    trigger:
+      - platform: time
+        at: "18:00:00"
+    condition:
+      - condition: state
+        entity_id: sensor.ramon_lopez_sesame_status
+        state: "checked_in"
+    action:
+      - service: sesame_time.check_out
+        data:
+          entity_id: button.ramon_lopez_sesame_check_in_out
+          latitude: "{{ state_attr('device_tracker.phone', 'latitude') }}"
+          longitude: "{{ state_attr('device_tracker.phone', 'longitude') }}"
 ```
 
 ### Reminder to check out

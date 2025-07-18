@@ -1,15 +1,65 @@
 check_in:
   name: Check In
-  description: Perform check-in for an employee
-  target:
-    entity:
-      integration: sesame_time
-      domain: button
+  description: Perform check-in for an employee with optional coordinates
+  fields:
+    entity_id:
+      name: Entity ID
+      description: Button entity ID of the employee
+      required: true
+      selector:
+        entity:
+          integration: sesame_time
+          domain: button
+    latitude:
+      name: Latitude
+      description: Latitude coordinates for check-in location
+      required: false
+      selector:
+        number:
+          min: -90
+          max: 90
+          step: 0.000001
+          mode: box
+    longitude:
+      name: Longitude
+      description: Longitude coordinates for check-in location
+      required: false
+      selector:
+        number:
+          min: -180
+          max: 180
+          step: 0.000001
+          mode: box
 
 check_out:
   name: Check Out
-  description: Perform check-out for an employee
-  target:
-    entity:
-      integration: sesame_time
-      domain: button
+  description: Perform check-out for an employee with optional coordinates
+  fields:
+    entity_id:
+      name: Entity ID
+      description: Button entity ID of the employee
+      required: true
+      selector:
+        entity:
+          integration: sesame_time
+          domain: button
+    latitude:
+      name: Latitude
+      description: Latitude coordinates for check-out location
+      required: false
+      selector:
+        number:
+          min: -90
+          max: 90
+          step: 0.000001
+          mode: box
+    longitude:
+      name: Longitude
+      description: Longitude coordinates for check-out location
+      required: false
+      selector:
+        number:
+          min: -180
+          max: 180
+          step: 0.000001
+          mode: box

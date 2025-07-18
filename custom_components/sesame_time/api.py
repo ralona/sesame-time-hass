@@ -136,15 +136,24 @@ class SesameTimeAPI:
             _LOGGER.error(f"Get me error: {err}")
             return {"success": False, "error": str(err)}
     
-    async def check_in(self) -> Dict[str, Any]:
+    async def check_in(self, latitude: Optional[float] = None, longitude: Optional[float] = None) -> Dict[str, Any]:
         """Perform check-in."""
         if not all([self._token, self._employee_id, self._company_id]):
             return {"success": False, "error": "Missing authentication data"}
             
         url = f"{self._base_url}/employees/{self._employee_id}/check-in"
+        
+        # Build coordinates object
+        coordinates = {}
+        if latitude is not None and longitude is not None:
+            coordinates = {
+                "latitude": latitude,
+                "longitude": longitude
+            }
+        
         data = {
-            "origin": "web",
-            "coordinates": {},
+            "origin": "web_extension",
+            "coordinates": coordinates,
             "workCheckTypeId": None
         }
         
@@ -171,15 +180,24 @@ class SesameTimeAPI:
             _LOGGER.error(f"Check-in error: {err}")
             return {"success": False, "error": str(err)}
     
-    async def check_out(self) -> Dict[str, Any]:
+    async def check_out(self, latitude: Optional[float] = None, longitude: Optional[float] = None) -> Dict[str, Any]:
         """Perform check-out."""
         if not all([self._token, self._employee_id, self._company_id]):
             return {"success": False, "error": "Missing authentication data"}
             
         url = f"{self._base_url}/employees/{self._employee_id}/check-out"
+        
+        # Build coordinates object
+        coordinates = {}
+        if latitude is not None and longitude is not None:
+            coordinates = {
+                "latitude": latitude,
+                "longitude": longitude
+            }
+        
         data = {
-            "origin": "web",
-            "coordinates": {},
+            "origin": "web_extension",
+            "coordinates": coordinates,
             "workCheckTypeId": None
         }
         

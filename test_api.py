@@ -83,29 +83,30 @@ async def test_api():
             else:
                 print(f"❌ Get status failed: {status_result.get('error')}")
             
-            # Test 4: Check-in/out (optional)
-            print("\n🚪 Test 4: Check-in/out test...")
-            print("⚠️  Do you want to actually perform a check-in/out? (y/N): ", end="")
+            # Test 4: Check-in/out with coordinates
+            print("\n🚪 Test 4: Check-in/out with coordinates test...")
             
-            # For automated testing, skip this
-            print("\n✅ Check-in/out test skipped (automated mode)")
+            # Test coordinates (example coordinates - replace with your own)
+            test_latitude = 40.4168
+            test_longitude = -3.7038
             
-            # Uncomment below to test check-in/out interactively
-            """
-            choice = input().lower().strip()
-            if choice == 'y':
-                if status_result.get("is_checked_in"):
-                    print("Performing check-out...")
-                    result = await api.check_out()
-                else:
-                    print("Performing check-in...")
-                    result = await api.check_in()
-                
-                if result.get("success"):
-                    print("✅ Action completed successfully!")
-                else:
-                    print(f"❌ Action failed: {result.get('error')}")
-            """
+            if status_result.get("is_checked_in"):
+                print(f"Currently checked in, performing check-out with coordinates...")
+                print(f"  Latitude: {test_latitude}")
+                print(f"  Longitude: {test_longitude}")
+                result = await api.check_out(latitude=test_latitude, longitude=test_longitude)
+                action = "check-out"
+            else:
+                print(f"Currently checked out, performing check-in with coordinates...")
+                print(f"  Latitude: {test_latitude}")
+                print(f"  Longitude: {test_longitude}")
+                result = await api.check_in(latitude=test_latitude, longitude=test_longitude)
+                action = "check-in"
+            
+            if result.get("success"):
+                print(f"✅ {action} with coordinates successful!")
+            else:
+                print(f"❌ {action} with coordinates failed: {result.get('error')}")
             
             print("\n🎉 ALL API TESTS COMPLETED!")
             
