@@ -1,0 +1,9 @@
+{
+  "name": "Sesame Time",
+  "content_in_root": false,
+  "country": ["ES", "US", "MX"],
+  "homeassistant": "2024.1.0",
+  "render_readme": true,
+  "zip_release": true,
+  "filename": "sesame_time.zip"
+}

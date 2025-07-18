@@ -1,0 +1,22 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Configurar Sesame Time",
+        "description": "Introduce tus credenciales de Sesame Time para añadir una cuenta de empleado.",
+        "data": {
+          "region": "Región",
+          "email": "Correo electrónico",
+          "password": "Contraseña"
+        }
+      }
+    },
+    "error": {
+      "auth_failed": "Error de autenticación. Por favor, verifica tus credenciales.",
+      "unknown": "Se produjo un error inesperado"
+    },
+    "abort": {
+      "already_configured": "Esta cuenta de empleado ya está configurada"
+    }
+  }
+}

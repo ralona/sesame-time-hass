@@ -1,0 +1,15 @@
+check_in:
+  name: Check In
+  description: Perform check-in for an employee
+  target:
+    entity:
+      integration: sesame_time
+      domain: button
+
+check_out:
+  name: Check Out
+  description: Perform check-out for an employee
+  target:
+    entity:
+      integration: sesame_time
+      domain: button
