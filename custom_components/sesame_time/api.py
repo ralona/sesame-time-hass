@@ -161,6 +161,10 @@ class SesameTimeAPI:
             timeout = aiohttp.ClientTimeout(total=DEFAULT_TIMEOUT)
             cookies = self._get_cookies()
             
+            _LOGGER.debug(f"Check-in URL: {url}")
+            _LOGGER.debug(f"Check-in data: {json.dumps(data)}")
+            _LOGGER.debug(f"Check-in headers: {self._get_headers()}")
+            
             async with self._session.post(
                 url,
                 headers=self._get_headers(),
@@ -168,12 +172,15 @@ class SesameTimeAPI:
                 data=json.dumps(data),
                 timeout=timeout,
             ) as response:
+                response_text = await response.text()
+                _LOGGER.debug(f"Check-in response status: {response.status}")
+                _LOGGER.debug(f"Check-in response: {response_text}")
+                
                 if response.status == 200:
                     _LOGGER.info("Check-in successful")
                     return {"success": True}
                 else:
-                    text = await response.text()
-                    _LOGGER.error(f"Check-in failed: {response.status} - {text}")
+                    _LOGGER.error(f"Check-in failed: {response.status} - {response_text}")
                     return {"success": False, "error": f"Check-in failed: {response.status}"}
                     
         except Exception as err:

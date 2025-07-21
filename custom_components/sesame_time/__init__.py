@@ -6,6 +6,7 @@ import voluptuous as vol
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant, ServiceCall
+from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 import homeassistant.helpers.config_validation as cv
 
@@ -77,11 +78,16 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
                     break
         
         if found_api:
-            result = await found_api.check_in(latitude=latitude, longitude=longitude)
-            if result.get("success"):
-                _LOGGER.info(f"Check-in successful for {entity_id}")
-            else:
-                _LOGGER.error(f"Check-in failed for {entity_id}: {result.get('error')}")
+            try:
+                result = await found_api.check_in(latitude=latitude, longitude=longitude)
+                if result.get("success"):
+                    _LOGGER.info(f"Check-in successful for {entity_id}")
+                else:
+                    _LOGGER.error(f"Check-in failed for {entity_id}: {result.get('error')}")
+                    raise HomeAssistantError(f"Check-in failed: {result.get('error')}")
+            except Exception as err:
+                _LOGGER.error(f"Exception during check-in: {err}")
+                raise HomeAssistantError(str(err))
         else:
             _LOGGER.error(f"Could not find API instance for entity {entity_id}")
     
@@ -105,11 +111,16 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
                     break
         
         if found_api:
-            result = await found_api.check_out(latitude=latitude, longitude=longitude)
-            if result.get("success"):
-                _LOGGER.info(f"Check-out successful for {entity_id}")
-            else:
-                _LOGGER.error(f"Check-out failed for {entity_id}: {result.get('error')}")
+            try:
+                result = await found_api.check_out(latitude=latitude, longitude=longitude)
+                if result.get("success"):
+                    _LOGGER.info(f"Check-out successful for {entity_id}")
+                else:
+                    _LOGGER.error(f"Check-out failed for {entity_id}: {result.get('error')}")
+                    raise HomeAssistantError(f"Check-out failed: {result.get('error')}")
+            except Exception as err:
+                _LOGGER.error(f"Exception during check-out: {err}")
+                raise HomeAssistantError(str(err))
         else:
             _LOGGER.error(f"Could not find API instance for entity {entity_id}")
     
