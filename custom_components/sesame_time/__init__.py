@@ -66,15 +66,20 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         
         _LOGGER.info(f"Service check_in called for {entity_id} with lat={latitude}, lng={longitude}")
         
+        # Debug: Show all available entries
+        _LOGGER.debug(f"Available entries in domain: {list(hass.data[DOMAIN].keys())}")
+        
         # Find the correct API instance based on entity_id
         found_api = None
         for entry_id, data in hass.data[DOMAIN].items():
             if isinstance(data, dict) and "api" in data:
                 # Check if this entity belongs to this entry
-                employee_name = data["entry_data"][CONF_EMPLOYEE_NAME].lower().replace(" ", "_")
-                if employee_name in entity_id.lower():
+                employee_id = data["entry_data"][CONF_EMPLOYEE_ID]
+                # The entity_id format is button.{employee_name}_{company_name}_check_in_out
+                # and the unique_id is {employee_id}_check
+                if employee_id.replace("-", "_") in entity_id:
                     found_api = data["api"]
-                    _LOGGER.info(f"Found API for employee: {employee_name}")
+                    _LOGGER.info(f"Found API for employee ID: {employee_id}")
                     break
         
         if found_api:
@@ -90,6 +95,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
                 raise HomeAssistantError(str(err))
         else:
             _LOGGER.error(f"Could not find API instance for entity {entity_id}")
+            raise HomeAssistantError(f"Could not find API instance for entity {entity_id}")
     
     async def async_check_out_service(call: ServiceCall) -> None:
         """Handle check-out service call."""
@@ -99,15 +105,20 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         
         _LOGGER.info(f"Service check_out called for {entity_id} with lat={latitude}, lng={longitude}")
         
+        # Debug: Show all available entries
+        _LOGGER.debug(f"Available entries in domain: {list(hass.data[DOMAIN].keys())}")
+        
         # Find the correct API instance based on entity_id
         found_api = None
         for entry_id, data in hass.data[DOMAIN].items():
             if isinstance(data, dict) and "api" in data:
                 # Check if this entity belongs to this entry
-                employee_name = data["entry_data"][CONF_EMPLOYEE_NAME].lower().replace(" ", "_")
-                if employee_name in entity_id.lower():
+                employee_id = data["entry_data"][CONF_EMPLOYEE_ID]
+                # The entity_id format is button.{employee_name}_{company_name}_check_in_out
+                # and the unique_id is {employee_id}_check
+                if employee_id.replace("-", "_") in entity_id:
                     found_api = data["api"]
-                    _LOGGER.info(f"Found API for employee: {employee_name}")
+                    _LOGGER.info(f"Found API for employee ID: {employee_id}")
                     break
         
         if found_api:
@@ -123,6 +134,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
                 raise HomeAssistantError(str(err))
         else:
             _LOGGER.error(f"Could not find API instance for entity {entity_id}")
+            raise HomeAssistantError(f"Could not find API instance for entity {entity_id}")
     
     # Register services (only once)
     if not hass.services.has_service(DOMAIN, "check_in"):
