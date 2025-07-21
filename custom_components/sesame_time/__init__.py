@@ -73,14 +73,28 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         found_api = None
         for entry_id, data in hass.data[DOMAIN].items():
             if isinstance(data, dict) and "api" in data:
-                # Check if this entity belongs to this entry
-                employee_id = data["entry_data"][CONF_EMPLOYEE_ID]
-                # The entity_id format is button.{employee_name}_{company_name}_check_in_out
-                # and the unique_id is {employee_id}_check
-                if employee_id.replace("-", "_") in entity_id:
-                    found_api = data["api"]
-                    _LOGGER.info(f"Found API for employee ID: {employee_id}")
-                    break
+                # Get the entity registry to find the correct entity
+                from homeassistant.helpers import entity_registry as er
+                entity_reg = er.async_get(hass)
+                entity_entry = entity_reg.async_get(entity_id)
+                
+                if entity_entry:
+                    # Check if the unique_id matches this entry's pattern
+                    employee_id = data["entry_data"][CONF_EMPLOYEE_ID]
+                    expected_unique_id = f"{employee_id}_check"
+                    _LOGGER.debug(f"Checking entity {entity_id}: unique_id={entity_entry.unique_id}, expected={expected_unique_id}")
+                    
+                    if entity_entry.unique_id == expected_unique_id:
+                        found_api = data["api"]
+                        _LOGGER.info(f"Found API for employee ID: {employee_id}")
+                        break
+                else:
+                    # Fallback: try matching by employee name in entity_id
+                    employee_name = data["entry_data"][CONF_EMPLOYEE_NAME].lower().replace(" ", "_")
+                    if employee_name in entity_id.lower():
+                        found_api = data["api"]
+                        _LOGGER.info(f"Found API for employee name: {employee_name}")
+                        break
         
         if found_api:
             try:
@@ -112,14 +126,28 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         found_api = None
         for entry_id, data in hass.data[DOMAIN].items():
             if isinstance(data, dict) and "api" in data:
-                # Check if this entity belongs to this entry
-                employee_id = data["entry_data"][CONF_EMPLOYEE_ID]
-                # The entity_id format is button.{employee_name}_{company_name}_check_in_out
-                # and the unique_id is {employee_id}_check
-                if employee_id.replace("-", "_") in entity_id:
-                    found_api = data["api"]
-                    _LOGGER.info(f"Found API for employee ID: {employee_id}")
-                    break
+                # Get the entity registry to find the correct entity
+                from homeassistant.helpers import entity_registry as er
+                entity_reg = er.async_get(hass)
+                entity_entry = entity_reg.async_get(entity_id)
+                
+                if entity_entry:
+                    # Check if the unique_id matches this entry's pattern
+                    employee_id = data["entry_data"][CONF_EMPLOYEE_ID]
+                    expected_unique_id = f"{employee_id}_check"
+                    _LOGGER.debug(f"Checking entity {entity_id}: unique_id={entity_entry.unique_id}, expected={expected_unique_id}")
+                    
+                    if entity_entry.unique_id == expected_unique_id:
+                        found_api = data["api"]
+                        _LOGGER.info(f"Found API for employee ID: {employee_id}")
+                        break
+                else:
+                    # Fallback: try matching by employee name in entity_id
+                    employee_name = data["entry_data"][CONF_EMPLOYEE_NAME].lower().replace(" ", "_")
+                    if employee_name in entity_id.lower():
+                        found_api = data["api"]
+                        _LOGGER.info(f"Found API for employee name: {employee_name}")
+                        break
         
         if found_api:
             try:

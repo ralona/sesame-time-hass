@@ -64,6 +64,8 @@ class SesameTimeStatusSensor(SensorEntity):
         
         self._attr_name = f"{employee_name} Status"
         self._attr_unique_id = f"{employee_id}_status"
+        
+        _LOGGER.info(f"Creating sensor - Name: {self._attr_name}, Unique ID: {self._attr_unique_id}")
         self._attr_icon = "mdi:account-clock"
         
         # Device info

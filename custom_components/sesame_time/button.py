@@ -58,6 +58,8 @@ class SesameTimeCheckButton(ButtonEntity):
         self._attr_unique_id = f"{employee_id}_check"
         self._attr_icon = "mdi:account-clock-outline"
         
+        _LOGGER.info(f"Creating button - Name: {self._attr_name}, Unique ID: {self._attr_unique_id}, Employee ID: {employee_id}")
+        
         # Device info
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, employee_id)},
