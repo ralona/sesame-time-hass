@@ -63,18 +63,27 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         latitude = call.data.get("latitude")
         longitude = call.data.get("longitude")
         
+        _LOGGER.info(f"Service check_in called for {entity_id} with lat={latitude}, lng={longitude}")
+        
         # Find the correct API instance based on entity_id
+        found_api = None
         for entry_id, data in hass.data[DOMAIN].items():
-            if entity_id.endswith(data["entry_data"][CONF_EMPLOYEE_ID].replace("-", "_")):
-                api = data["api"]
-                result = await api.check_in(latitude=latitude, longitude=longitude)
-                if result.get("success"):
-                    _LOGGER.info(f"Check-in successful for {entity_id}")
-                    # Update the sensor
-                    await hass.helpers.entity_component.async_update_entity(hass, entity_id.replace("button.", "sensor.").replace("_check", "_status"))
-                else:
-                    _LOGGER.error(f"Check-in failed for {entity_id}: {result.get('error')}")
-                break
+            if isinstance(data, dict) and "api" in data:
+                # Check if this entity belongs to this entry
+                employee_name = data["entry_data"][CONF_EMPLOYEE_NAME].lower().replace(" ", "_")
+                if employee_name in entity_id.lower():
+                    found_api = data["api"]
+                    _LOGGER.info(f"Found API for employee: {employee_name}")
+                    break
+        
+        if found_api:
+            result = await found_api.check_in(latitude=latitude, longitude=longitude)
+            if result.get("success"):
+                _LOGGER.info(f"Check-in successful for {entity_id}")
+            else:
+                _LOGGER.error(f"Check-in failed for {entity_id}: {result.get('error')}")
+        else:
+            _LOGGER.error(f"Could not find API instance for entity {entity_id}")
     
     async def async_check_out_service(call: ServiceCall) -> None:
         """Handle check-out service call."""
@@ -82,18 +91,27 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         latitude = call.data.get("latitude")
         longitude = call.data.get("longitude")
         
+        _LOGGER.info(f"Service check_out called for {entity_id} with lat={latitude}, lng={longitude}")
+        
         # Find the correct API instance based on entity_id
+        found_api = None
         for entry_id, data in hass.data[DOMAIN].items():
-            if entity_id.endswith(data["entry_data"][CONF_EMPLOYEE_ID].replace("-", "_")):
-                api = data["api"]
-                result = await api.check_out(latitude=latitude, longitude=longitude)
-                if result.get("success"):
-                    _LOGGER.info(f"Check-out successful for {entity_id}")
-                    # Update the sensor
-                    await hass.helpers.entity_component.async_update_entity(hass, entity_id.replace("button.", "sensor.").replace("_check", "_status"))
-                else:
-                    _LOGGER.error(f"Check-out failed for {entity_id}: {result.get('error')}")
-                break
+            if isinstance(data, dict) and "api" in data:
+                # Check if this entity belongs to this entry
+                employee_name = data["entry_data"][CONF_EMPLOYEE_NAME].lower().replace(" ", "_")
+                if employee_name in entity_id.lower():
+                    found_api = data["api"]
+                    _LOGGER.info(f"Found API for employee: {employee_name}")
+                    break
+        
+        if found_api:
+            result = await found_api.check_out(latitude=latitude, longitude=longitude)
+            if result.get("success"):
+                _LOGGER.info(f"Check-out successful for {entity_id}")
+            else:
+                _LOGGER.error(f"Check-out failed for {entity_id}: {result.get('error')}")
+        else:
+            _LOGGER.error(f"Could not find API instance for entity {entity_id}")
     
     # Register services (only once)
     if not hass.services.has_service(DOMAIN, "check_in"):
